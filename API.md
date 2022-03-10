@@ -3,18 +3,23 @@
 ## get datasets
 ```
 GET: /datasets
+
+reply:
+{
+datasets:[d1,d2,d3]
+}
 ```
 
-## get sample uuid
+## get samples
 ```
-POST: /samples
+GET: /samples
 {
 datasets:[d1,d3]
 }
 
 reply:
 {
-samples:[uuid1,uuid2,uuid3]
+samples:[path1,path2,path3]
 }
 ```
 
@@ -36,8 +41,7 @@ src:.glb
 ```
 POST: /edit_pool_dataset
 {
-id: d1
-action:add(delete)
+datasets:[d1,d3]
 }
 ```
 

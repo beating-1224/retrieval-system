@@ -11,7 +11,7 @@ class Object3dAdmin(admin.ModelAdmin):
 
 
 class ModalityAdmin(admin.ModelAdmin):
-    list_display = ['modalityType', 'uuid', 'host']
+    list_display = ['modalityType', 'path', 'host']
 
 
 admin.site.register(Dataset, DatasetAdmin)

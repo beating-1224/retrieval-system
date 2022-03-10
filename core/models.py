@@ -20,9 +20,7 @@ class Dataset(models.Model):
 class Object3d(models.Model):
     objectId = models.CharField(max_length=100, verbose_name="object id")
     label = models.CharField(max_length=100, verbose_name="object label")
-
-    container = models.ForeignKey('Dataset', on_delete=models.CASCADE, related_name='containing',
-                                  verbose_name="container")
+    container = models.ForeignKey('Dataset', on_delete=models.CASCADE, related_name='containing', verbose_name="container")
 
     def to_dict(self):
         return {
@@ -39,11 +37,11 @@ class Object3d(models.Model):
 
 class Modality(models.Model):
     modalityType = models.IntegerField(choices=((0, 'PointCloud'), (1, 'Voxel'), (2, 'MultiView')), verbose_name='modalityType')
-    uuid = models.CharField(max_length=100)
+    path = models.CharField(max_length=1000)
     host = models.ForeignKey('Object3d', on_delete=models.CASCADE, related_name='modality', verbose_name="host object")
 
     def __str__(self):
-        return self.uuid
+        return self.path
 
     class Meta:
         verbose_name = 'Modality'

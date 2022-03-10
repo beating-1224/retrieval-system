@@ -23,8 +23,6 @@ urlpatterns = [
     path('datasets', views.get_datasets),
     path('samples', views.get_samples),
     path('upload', views.upload),
-    path('edit_pool_dataset', views.edit_pool_dataset),
-    path('edit_pool_modality', views.edit_pool_modality),
     path('search_sample', views.search_sample),
     path('search_file', views.search_file),
 
