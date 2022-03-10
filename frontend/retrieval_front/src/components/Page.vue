@@ -1,7 +1,7 @@
 <template>
   <v-container style="height:100%">
     <v-row>
-      <v-col cols="10" md="5">
+      <v-col cols="11" md="5">
         <v-row>
           <v-card>
             <v-card-title class="justify-center">Query</v-card-title>
@@ -12,11 +12,12 @@
             >
               <v-tab key="tab1">Samples</v-tab>
               <v-tab-item key="tab1">
-                <v-card height="200pt" width="300pt">
+                <v-card height="200pt" width="360pt">
 
                   <v-container fluid>
                     <v-combobox
-                        v-model="selected_datasets_1"
+                        v-model="sampleDatasets"
+                        v-on:change="sampleDatasetsChanged"
                         :items="datasets"
                         hide-selected
                         label="Search for datasets"
@@ -108,22 +109,33 @@
         </v-row>
 
         <v-row>
-          <v-card height="250pt" width="300pt">
-            <model-viewer id="reveal" loading="eager" camera-controls auto-rotate
-                          poster="/assets/tmp/astronaut.png"
-                          src="/assets/tmp/Astronaut.glb"
-                          alt="A 3D model of a shishkebab"
-            >
-            </model-viewer>
+          <v-card height="250pt" width="360pt">
+            <v-row>
+              <v-col cols="9">
+                <model-viewer id="reveal" loading="eager" camera-controls auto-rotate
+                              poster="/assets/tmp/astronaut.png"
+                              src="/assets/tmp/Astronaut.glb"
+                              alt="A 3D model of a shishkebab"
+                >
+                </model-viewer>
+              </v-col>
+              <v-col cols="3" style="display:flex;align-items:flex-end;">
+                <v-btn
+                    color="deep-purple accent-4"
+                    dark
+                    @click="beginSearch"
+                >
+                  Search
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-card>
+
         </v-row>
       </v-col>
 
-      <v-col cols="2" md="1">
-        <v-card>
+      <v-col cols="1" md="1" style="display:flex;justify-content:center;align-items:center">
 
-
-        </v-card>
       </v-col>
 
       <v-col cols="12" md="6">
@@ -145,7 +157,8 @@
               <v-col>
                 <v-container fluid>
                   <v-combobox
-                      v-model="selected_datasets_2"
+                      v-model="resultDatasets"
+                      v-on:change="resultDatasetsChanged"
                       :items="datasets"
                       hide-selected
                       label="Search for datasets"
@@ -266,9 +279,7 @@
           </v-card>
         </v-row>
 
-
         <v-row>
-
         </v-row>
       </v-col>
     </v-row>
@@ -370,41 +381,30 @@
 </template>
 
 <script>
+import api from "../api"
 
 export default {
   name: "Page",
   data() {
     return {
       samples: [
-        '1', '2', '3', '7', '8', '9', '1', '2', '1', '2', '3', '7', '8', '9', '1', '2','1', '2', '3', '7', '8', '9', '1', '2','1', '2', '3', '7', '8', '9', '1', '2',],
+        '1', '2', '3', '7', '8', '9', '1', '2', '1', '2', '3', '7', '8', '9', '1', '2', '1', '2', '3', '7', '8', '9', '1', '2', '1', '2', '3', '7', '8', '9', '1', '2',],
       results: [
-        '8', '9', '1', '2', '3', '7', '8', '9',  '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9',],
+        '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9',],
       datasets: [
         {header: 'Select one or more datasets'},
-        {
-          text: 'Dataset1',
-          color: 'blue',
-        },
-        {
-          text: 'Dataset2',
-          color: 'purple',
-        },
-        {
-          text: 'Dataset3',
-          color: 'indigo',
-        },
-        {
-          text: 'Dataset4',
-          color: 'cyan',
-        },
       ],
-      selected_datasets_1: [],
-      selected_datasets_2: [],
+      colors: ['blue', 'purple', 'indigo', 'cyan', 'red', 'pink'],
+      sampleDatasets: [],
+      resultDatasets: [],
       dialog: false,
       checkbox1: false,
       checkbox2: false,
       checkbox3: false,
     }
+  },
+  mounted: function () {
+    this.getDatasets()
   },
   computed: {
     sampleRows: function () {
@@ -440,7 +440,42 @@ export default {
       console.log(index)
       this.dialog = true
     },
-  }
+    beginSearch() {
+      console.log(this.sampleDatasets)
+    },
+    getDatasets() {
+      api.getDatasets()
+          .then(res => {
+            if (res.status === 200) {
+              let datasets = res.data['datasets']
+              for (let j = 0; j < datasets.length; j++) {
+                this.datasets.push({
+                  text: datasets[j],
+                  color: this.colors[j % (this.colors.length)]
+                })
+              }
+            }
+          })
+          .catch(error => {
+            console.log(error)
+            // if (error.data['error']) {
+            //   this.$message({
+            //     showClose: true,
+            //     message: error.data['error'],
+            //     type: "error"
+            //   })
+            // }
+          })
+    },
+    sampleDatasetsChanged(){
+      console.log('changed')
+      // this.sampleDatasets
+    },
+    resultDatasetsChanged(){
+      console.log('changed')
+    }
+  },
+
 }
 </script>
 

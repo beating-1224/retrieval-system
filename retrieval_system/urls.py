@@ -18,12 +18,12 @@ from django.urls import path
 from core import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('update_datasets', views.update_datasets),
-    path('datasets', views.get_datasets),
-    path('samples', views.get_samples),
-    path('upload', views.upload),
-    path('search_sample', views.search_sample),
-    path('search_file', views.search_file),
+    path('api/admin/', admin.site.urls),
+    path('api/update_datasets', views.update_datasets),
+    path('api/datasets', views.get_datasets),
+    path('api/samples', views.get_samples),
+    path('api/upload', views.upload),
+    path('api/search_sample', views.search_sample),
+    path('api/search_file', views.search_file),
 
 ]

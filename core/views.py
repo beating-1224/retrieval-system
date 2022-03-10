@@ -11,6 +11,9 @@ from core.models import Dataset, Object3d, Modality
 from core.const import DATASETS_URL
 from random import choices, choice
 
+from core.utils import retrieval
+
+
 def update_datasets(request):
     try:
         datasets = os.listdir(DATASETS_URL)
@@ -101,7 +104,15 @@ def upload(request):
 
 
 def search_sample(request):
-    return HttpResponse('okk')
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'}, status=400)
+    query = request.GET.get('query', '')
+    datasets = request.GET.get('datasets', '')
+    datasets = datasets.split(',')
+    modalities = request.GET.get('modalities', '')
+    modalities = modalities.split(',')
+    ret = retrieval(datasets, modalities, query, k=50)
+    return JsonResponse({'samples': ret})
 
 
 def search_file(request):
