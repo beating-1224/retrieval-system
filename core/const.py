@@ -1,1 +1,1 @@
-DATASETS_URL = 'tmp/datasets'
+DATASETS_URL = 'datasets'

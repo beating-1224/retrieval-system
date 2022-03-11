@@ -1,7 +1,7 @@
 <template>
   <v-container style="height:100%">
     <v-row>
-      <v-col cols="11" md="5">
+      <v-col cols="12" md="6">
         <v-row>
           <v-card>
             <v-card-title class="justify-center">Query</v-card-title>
@@ -12,7 +12,7 @@
             >
               <v-tab key="tab1">Samples</v-tab>
               <v-tab-item key="tab1">
-                <v-card height="200pt" width="360pt">
+                <v-card height="200pt" width="400pt">
 
                   <v-container fluid>
                     <v-combobox
@@ -75,10 +75,10 @@
                                 style="display:flex;justify-content:center;align-items:center"
                             >
                               <v-img
-                                  :lazy-src="`/assets/tmp/${it}.png`"
+                                  :lazy-src="`http://127.0.0.1:8888/${it}`"
                                   height="40"
                                   width="40"
-                                  :src="`/assets/tmp/${it}.png`"
+                                  :src="`http://127.0.0.1:8888/${it}`"
                                   contain
                                   @click="chooseSample(it)"
                                   style="border: 1px solid lightgray;"
@@ -95,7 +95,7 @@
               </v-tab-item>
               <v-tab key="tab2">Upload</v-tab>
               <v-tab-item key="tab2">
-                <v-card height="200pt" width="300pt" style="display:flex;justify-content:center;align-items:center">
+                <v-card height="200pt" width="400pt" style="display:flex;justify-content:center;align-items:center">
                   <v-btn
                       depressed
                       color="primary"
@@ -109,33 +109,71 @@
         </v-row>
 
         <v-row>
-          <v-card height="250pt" width="360pt">
-            <v-row>
+          <v-card height="250pt" width="400pt">
+            <v-row style="margin:0">
               <v-col cols="9">
-                <model-viewer id="reveal" loading="eager" camera-controls auto-rotate
-                              poster="/assets/tmp/astronaut.png"
-                              src="/assets/tmp/Astronaut.glb"
-                              alt="A 3D model of a shishkebab"
+                <!--                <model-viewer id="reveal" loading="eager" camera-controls auto-rotate-->
+                <!--                              poster="/assets/tmp/astronaut.png"-->
+                <!--                              src="/assets/tmp/Astronaut.glb"-->
+                <!--                              alt="A 3D model of a shishkebab"-->
+                <!--                >-->
+                <!--                </model-viewer>-->
+                <v-img
+                    :lazy-src="`http://127.0.0.1:8888/${showedSample}`"
+                    height="320"
+                    width="360"
+                    :src="`http://127.0.0.1:8888/${showedSample}`"
+                    contain
+                    style="border: 1px solid lightgray;"
                 >
-                </model-viewer>
+                </v-img>
               </v-col>
-              <v-col cols="3" style="display:flex;align-items:flex-end;">
-                <v-btn
-                    color="deep-purple accent-4"
-                    dark
-                    @click="beginSearch"
-                >
-                  Search
-                </v-btn>
+              <!--              <v-col cols="3" style="display:flex;align-items:flex-end;">-->
+              <v-col cols="3">
+                <v-row style="display:flex;justify-content:center;align-items:center;margin:12px">
+                  <v-btn
+                      color="deep-purple accent-4"
+                      dark
+                      @click="beginSearch"
+                  >
+                    Search
+                  </v-btn>
+                </v-row>
+
+                <v-row style="display:flex;justify-content:center;align-items:center;margin:0">
+                  <v-card>
+                    <v-list two-line>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title v-html="`Dataset`"></v-list-item-title>
+                          <v-list-item-subtitle v-html="showedSampleDataset"></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider
+                      ></v-divider>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title v-html="`Label`"></v-list-item-title>
+                          <v-list-item-subtitle v-html="showedSampleLabel"></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider
+                      ></v-divider>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <v-list-item-title v-html="`Modality`"></v-list-item-title>
+                          <v-list-item-subtitle v-html="showedSampleModality"></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-card>
+                </v-row>
+
               </v-col>
             </v-row>
           </v-card>
 
         </v-row>
-      </v-col>
-
-      <v-col cols="1" md="1" style="display:flex;justify-content:center;align-items:center">
-
       </v-col>
 
       <v-col cols="12" md="6">
@@ -220,28 +258,31 @@
                   <v-col
                   >
                     <v-checkbox
-                        v-model="checkbox1"
+                        v-model="targetModality[0]"
                         label="Point Cloud"
+                        color="deep-purple accent-4"
                     ></v-checkbox>
                   </v-col>
                   <v-col
                   >
                     <v-checkbox
-                        v-model="checkbox2"
+                        v-model="targetModality[1]"
                         label="Voxel"
+                        color="deep-purple accent-4"
                     ></v-checkbox>
                   </v-col>
                   <v-col
                   >
                     <v-checkbox
-                        v-model="checkbox3"
+                        v-model="targetModality[2]"
                         label="Multi-view"
+                        color="deep-purple accent-4"
                     ></v-checkbox>
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row style="margin: 0">
               <v-virtual-scroll
                   height="480"
                   item-height="75"
@@ -260,8 +301,8 @@
                           <v-img
                               :lazy-src="`/assets/tmp/${it}.png`"
                               :src="`/assets/tmp/${it}.png`"
-                              height="60"
-                              width="60"
+                              height="55"
+                              width="55"
                               contain
                               @click="chooseResult(it)"
                               style="border: 1px solid lightgray;"
@@ -387,8 +428,7 @@ export default {
   name: "Page",
   data() {
     return {
-      samples: [
-        '1', '2', '3', '7', '8', '9', '1', '2', '1', '2', '3', '7', '8', '9', '1', '2', '1', '2', '3', '7', '8', '9', '1', '2', '1', '2', '3', '7', '8', '9', '1', '2',],
+      samples: [],
       results: [
         '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9',],
       datasets: [
@@ -398,13 +438,13 @@ export default {
       sampleDatasets: [],
       resultDatasets: [],
       dialog: false,
-      checkbox1: false,
-      checkbox2: false,
-      checkbox3: false,
+      targetModality: [false, false, false],
+      showedSample: '',
     }
   },
   mounted: function () {
     this.getDatasets()
+    // this.chooseSample(this.samples[0])
   },
   computed: {
     sampleRows: function () {
@@ -430,19 +470,78 @@ export default {
         res.push(temp)
       }
       return res
-    }
+    },
+    showedSampleDataset: function () {
+      return this.showedSample.split('/')[1]
+    },
+    showedSampleLabel: function () {
+      return this.showedSample.split('/')[2]
+    },
+    showedSampleModality: function () {
+      let file = this.showedSample.split('/')[4]
+      if (file === undefined) {
+        return '        '
+      }
+      let m = file.split('.')[0]
+      if (m === 'pt') {
+        return 'Point Cloud'
+      }
+      if (m === 'vox') {
+        return 'Voxel'
+      }
+      if (m === 'mv') {
+        return 'Multi-view'
+      }
+      return ''
+    },
   },
   methods: {
     chooseSample(index) {
-      console.log(index)
-    },
+      this.showedSample = index
+    }
+    ,
     chooseResult(index) {
       console.log(index)
       this.dialog = true
-    },
+    }
+    ,
     beginSearch() {
-      console.log(this.sampleDatasets)
-    },
+
+      let resultDatasets = []
+      for (let i = 0; i < this.resultDatasets.length; i++) {
+        resultDatasets.push(this.resultDatasets[i].text)
+      }
+      let datasets = ''
+      for (let i = 0; i < this.resultDatasets.length; i++) {
+        datasets += this.resultDatasets[i].text
+        datasets += ','
+      }
+
+
+      let modalities = ''
+      if (this.targetModality[0]) {
+        modalities += 'pt,'
+      }
+      if (this.targetModality[1]) {
+        modalities += 'vx,'
+      }
+      if (this.targetModality[2]) {
+        modalities += 'mv,'
+      }
+      console.log(this.showedSample)
+      console.log(datasets)
+      console.log(modalities)
+      api.search(this.showedSample, datasets, modalities)
+          .then(res => {
+            if (res.status === 200) {
+              console.log(res)
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+    }
+    ,
     getDatasets() {
       api.getDatasets()
           .then(res => {
@@ -454,27 +553,41 @@ export default {
                   color: this.colors[j % (this.colors.length)]
                 })
               }
+              if (this.datasets.length > 1) {
+                this.sampleDatasets.push(this.datasets[1])
+                this.sampleDatasetsChanged()
+              }
             }
           })
           .catch(error => {
             console.log(error)
-            // if (error.data['error']) {
-            //   this.$message({
-            //     showClose: true,
-            //     message: error.data['error'],
-            //     type: "error"
-            //   })
-            // }
+          })
+    }
+    ,
+    sampleDatasetsChanged() {
+      // this.sampleDatasets
+      let datasets = ''
+      for (let i = 0; i < this.sampleDatasets.length; i++) {
+        datasets += this.sampleDatasets[i].text
+        datasets += ','
+      }
+      api.getSamples(datasets)
+          .then(res => {
+            if (res.status === 200) {
+              let samples = res.data['samples']
+              this.samples = samples
+              this.chooseSample(this.samples[0])
+            }
+          })
+          .catch(error => {
+            console.log(error)
           })
     },
-    sampleDatasetsChanged(){
-      console.log('changed')
-      // this.sampleDatasets
-    },
-    resultDatasetsChanged(){
+    resultDatasetsChanged() {
       console.log('changed')
     }
-  },
+  }
+  ,
 
 }
 </script>
