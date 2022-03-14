@@ -66,21 +66,21 @@
                       :items="sampleRows"
                   >
                     <template v-slot:default="{ item }">
-                      <v-list-item :key="item">
+                      <v-list-item :key="item.id">
                         <v-list-item-content>
                           <v-row>
                             <v-col
-                                v-for="it in item"
-                                :key="it"
+                                v-for="it in item.arr"
+                                :key="it.id"
                                 style="display:flex;justify-content:center;align-items:center"
                             >
                               <v-img
-                                  :lazy-src="`http://127.0.0.1:8888/${it}`"
+                                  :lazy-src="`http://127.0.0.1:8888/${it.path}`"
                                   height="40"
                                   width="40"
-                                  :src="`http://127.0.0.1:8888/${it}`"
+                                  :src="`http://127.0.0.1:8888/${it.path}`"
                                   contain
-                                  @click="chooseSample(it)"
+                                  @click="chooseSample(it.path)"
                                   style="border: 1px solid lightgray;"
                               ></v-img>
                             </v-col>
@@ -290,21 +290,21 @@
                   style="display:flex"
               >
                 <template v-slot:default="{ item }">
-                  <v-list-item :key="item">
+                  <v-list-item :key="item.id">
                     <v-list-item-content>
                       <v-row style="display:flex;justify-content:center;align-items:center">
                         <v-col
-                            v-for="it in item"
-                            :key="it"
+                            v-for="it in item.arr"
+                            :key="it.id"
                             style="display:flex;justify-content:center;align-items:center"
                         >
                           <v-img
-                              :lazy-src="`/assets/tmp/${it}.png`"
-                              :src="`/assets/tmp/${it}.png`"
+                              :lazy-src="`http://127.0.0.1:8888/${it.path}`"
+                              :src="`http://127.0.0.1:8888/${it.path}`"
                               height="55"
                               width="55"
                               contain
-                              @click="chooseResult(it)"
+                              @click="chooseResult(it.path)"
                               style="border: 1px solid lightgray;"
                           ></v-img>
                         </v-col>
@@ -336,29 +336,30 @@
 
           <v-row style="display:flex;justify-content:center;align-items:center">
             <v-col cols="10" md="5">
-              <v-row>
-                <span>
-                  Object ID:
-                </span>
-              </v-row>
-
-              <v-row>
-                <span>
-                  Name:
-                </span>
-              </v-row>
-
-              <v-row>
-                <span>
-                  Dataset:
-                </span>
-              </v-row>
-
-              <v-row>
-                <span>
-                  Modality:
-                </span>
-              </v-row>
+              <v-list two-line>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title v-html="`Dataset`"></v-list-item-title>
+                    <v-list-item-subtitle v-html="showedSampleDataset"></v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider
+                ></v-divider>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title v-html="`Label`"></v-list-item-title>
+                    <v-list-item-subtitle v-html="showedSampleLabel"></v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider
+                ></v-divider>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title v-html="`Object ID`"></v-list-item-title>
+                    <v-list-item-subtitle v-html="details['objectId']"></v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
 
             </v-col>
             <v-col cols="10" md="5">
@@ -368,33 +369,60 @@
                   dark
               >
                 <v-tab key="detailTab1">Point Cloud</v-tab>
-                <v-tab-item key="detailTab1" style="display:flex;justify-content:center;align-items:center">
-                  <model-viewer id="detail" loading="lazy" camera-controls auto-rotate
-                                poster="/assets/tmp/astronaut.png"
-                                src="/assets/tmp/Astronaut.glb"
-                                alt="A 3D model of a shishkebab"
+                <v-tab-item key="detailTab1" style="margin-left:auto; margin-right:auto">
+                  <!--                  <model-viewer id="detail1" loading="lazy" camera-controls auto-rotate-->
+                  <!--                                poster="/assets/tmp/astronaut.png"-->
+                  <!--                                src="/assets/tmp/Astronaut.glb"-->
+                  <!--                                alt="A 3D model of a shishkebab"-->
+                  <!--                  >-->
+                  <!--                  </model-viewer>-->
+                  <v-img
+                      :lazy-src="`http://127.0.0.1:8888/${details.pt}`"
+                      height="320"
+                      width="360"
+                      :src="`http://127.0.0.1:8888/${details.pt}`"
+                      contain
+                      style="border: 1px solid lightgray;"
                   >
-                  </model-viewer>
+                  </v-img>
                 </v-tab-item>
 
                 <v-tab key="detailTab2">Voxel</v-tab>
-                <v-tab-item key="detailTab2" style="display:flex;justify-content:center;align-items:center">
-                  <model-viewer id="detail" loading="lazy" camera-controls auto-rotate
-                                poster="/assets/tmp/astronaut.png"
-                                src="/assets/tmp/Astronaut.glb"
-                                alt="A 3D model of a shishkebab"
+                <v-tab-item key="detailTab2" style="margin-left:auto; margin-right:auto">
+                  <!--                  <model-viewer id="detail2" loading="lazy" camera-controls auto-rotate-->
+                  <!--                                poster="/assets/tmp/astronaut.png"-->
+                  <!--                                src="/assets/tmp/Astronaut.glb"-->
+                  <!--                                alt="A 3D model of a shishkebab"-->
+                  <!--                  >-->
+                  <!--                  </model-viewer>-->
+                  <v-img
+                      :lazy-src="`http://127.0.0.1:8888/${details.vx}`"
+                      height="320"
+                      width="360"
+                      :src="`http://127.0.0.1:8888/${details.vx}`"
+                      contain
+                      style="border: 1px solid lightgray;"
                   >
-                  </model-viewer>
+                  </v-img>
                 </v-tab-item>
 
                 <v-tab key="detailTab3">Multi-view</v-tab>
-                <v-tab-item key="detailTab3" style="display:flex;justify-content:center;align-items:center">
-                  <model-viewer id="detail" loading="lazy" camera-controls auto-rotate
-                                poster="/assets/tmp/astronaut.png"
-                                src="/assets/tmp/Astronaut.glb"
-                                alt="A 3D model of a shishkebab"
+                <v-tab-item key="detailTab3" style="margin-left:auto; margin-right:auto">
+                  <!--                  <model-viewer id="detail3" loading="lazy" camera-controls auto-rotate-->
+                  <!--                                poster="/assets/tmp/astronaut.png"-->
+                  <!--                                src="/assets/tmp/Astronaut.glb"-->
+                  <!--                                alt="A 3D model of a shishkebab"-->
+                  <!--                  >-->
+                  <!--                  </model-viewer>-->
+                  <v-img
+                      :lazy-src="`http://127.0.0.1:8888/${details.mv}`"
+                      height="320"
+                      width="360"
+                      :src="`http://127.0.0.1:8888/${details.mv}`"
+                      contain
+                      style="border: 1px solid lightgray;"
                   >
-                  </model-viewer>
+                  </v-img>
                 </v-tab-item>
               </v-tabs>
             </v-col>
@@ -429,8 +457,7 @@ export default {
   data() {
     return {
       samples: [],
-      results: [
-        '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9', '8', '9', '1', '2', '3', '7', '8', '9',],
+      results: [],
       datasets: [
         {header: 'Select one or more datasets'},
       ],
@@ -440,6 +467,13 @@ export default {
       dialog: false,
       targetModality: [false, false, false],
       showedSample: '',
+      details: {
+        'pt': '',
+        'vx': '',
+        'mv': '',
+        'objectId': '',
+        'label': ''
+      },
     }
   },
   mounted: function () {
@@ -448,26 +482,32 @@ export default {
   },
   computed: {
     sampleRows: function () {
-      let baseArray = this.samples
+      let baseArray = []
+      for (let i = 0; i < this.samples.length; i++) {
+        baseArray.push({'path': this.samples[i], 'id': i})
+      }
       let len = baseArray.length
       let n = 5
       let lineNum = len % n === 0 ? len / n : Math.floor((len / n) + 1)
       let res = []
       for (let i = 0; i < lineNum; i++) {
         let temp = baseArray.slice(i * n, i * n + n)
-        res.push(temp)
+        res.push({'arr': temp, 'row': i})
       }
       return res
     },
     resultRows: function () {
-      let baseArray = this.results
+      let baseArray = []
+      for (let i = 0; i < this.results.length; i++) {
+        baseArray.push({'path': this.results[i], 'id': i})
+      }
       let len = baseArray.length
       let n = 5
       let lineNum = len % n === 0 ? len / n : Math.floor((len / n) + 1)
       let res = []
       for (let i = 0; i < lineNum; i++) {
         let temp = baseArray.slice(i * n, i * n + n)
-        res.push(temp)
+        res.push({'arr': temp, 'row': i})
       }
       return res
     },
@@ -501,12 +541,24 @@ export default {
     }
     ,
     chooseResult(index) {
-      console.log(index)
       this.dialog = true
+      api.getDetails(index)
+          .then(res => {
+            if (res.status === 200) {
+              this.details['pt'] = res.data['pt']
+              this.details['vx'] = res.data['vx']
+              this.details['mv'] = res.data['mv']
+              this.details['objectId'] = res.data['objectId']
+              this.details['label'] = res.data['label']
+            }
+            console.log(this.details)
+          })
+          .catch(error => {
+            console.log(error)
+          })
     }
     ,
     beginSearch() {
-
       let resultDatasets = []
       for (let i = 0; i < this.resultDatasets.length; i++) {
         resultDatasets.push(this.resultDatasets[i].text)
@@ -528,13 +580,10 @@ export default {
       if (this.targetModality[2]) {
         modalities += 'mv,'
       }
-      console.log(this.showedSample)
-      console.log(datasets)
-      console.log(modalities)
       api.search(this.showedSample, datasets, modalities)
           .then(res => {
             if (res.status === 200) {
-              console.log(res)
+              this.results = res.data['results']
             }
           })
           .catch(error => {
@@ -584,7 +633,7 @@ export default {
           })
     },
     resultDatasetsChanged() {
-      console.log('changed')
+
     }
   }
   ,

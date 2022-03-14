@@ -18,7 +18,10 @@ const api = {
     },
     search(query,datasets, modalities){
         return axios.get("/api/search_sample", { params: { query: query,datasets:datasets,modalities:modalities} })
-    }
+    },
+    getDetails(query){
+        return axios.get("/api/details", { params: { query: query } })
+    },
 }
 
 export default api;

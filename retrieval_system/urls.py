@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/upload', views.upload),
     path('api/search_sample', views.search_sample),
     path('api/search_file', views.search_file),
+    path('api/details', views.get_details),
 
 ]

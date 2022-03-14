@@ -18,18 +18,20 @@ def retrieval(datasets, modalities, query, k=50):
     m = m.first()
     obj = m.host
     label = obj.label
-    results = None
+    results = []
     for dataset in datasets:
         dataset = Dataset.objects.filter(datasetName=dataset)
         dataset = dataset.first()
         result = Object3d.objects.filter(label=label, container=dataset)
-        results = result if results is None else results | result
-    all_ms = None
+        for r in result:
+            results.append(r)
+    ret = []
     for obj in results:
         for modality in modalities:
             ms = obj.modality.filter(modalityType=MODALITY_CODE[modality])
-            all_ms = ms if all_ms is None else ms | all_ms
-    ret = []
-    for ms in all_ms:
-        ret.append(str(ms))
-    return choices(ret, k=30)
+            for m in ms:
+                ret.append(str(m))
+    if len(ret) > k:
+        return choices(ret, k=k)
+    else:
+        return ret

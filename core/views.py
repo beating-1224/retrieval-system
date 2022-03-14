@@ -83,12 +83,14 @@ def get_samples(request):
     # datasets = data.get('datasets')
     datasets = request.GET.get('datasets', '')
     datasets = datasets.split(',')
-    all_obj = None
+    datasets = list(filter(None, datasets))
+    all_obj = []
     for dataset in datasets:
         dataset = Dataset.objects.filter(datasetName=dataset)
         dataset = dataset.first()
         objs = Object3d.objects.filter(container=dataset)
-        all_obj = objs if all_obj is None else all_obj | objs
+        for o in objs:
+            all_obj.append(o)
     sample_obj = choices(all_obj, k=40)
     ret = []
     for obj in sample_obj:
@@ -108,12 +110,31 @@ def search_sample(request):
         return JsonResponse({'error': 'require GET'}, status=400)
     query = request.GET.get('query', '')
     datasets = request.GET.get('datasets', '')
-    datasets = datasets.split(',')
     modalities = request.GET.get('modalities', '')
+
+    datasets = datasets.split(',')
     modalities = modalities.split(',')
+
+    datasets = list(filter(None, datasets))
+    modalities = list(filter(None, modalities))
+
     ret = retrieval(datasets, modalities, query, k=50)
-    return JsonResponse({'samples': ret})
+    return JsonResponse({'results': ret})
 
 
 def search_file(request):
     return HttpResponse('okk')
+
+
+def get_details(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'}, status=400)
+    query = request.GET.get('query', '')
+    m = Modality.objects.filter(path=query)
+    m = m.first()
+    obj = m.host
+    label = obj.label
+    pt = Modality.objects.get(host=obj, modalityType=0)
+    vx = Modality.objects.get(host=obj, modalityType=1)
+    mv = Modality.objects.get(host=obj, modalityType=2)
+    return JsonResponse({'pt': str(pt), 'vx': str(vx), 'mv': str(mv), 'objectId': str(obj), 'label': label})

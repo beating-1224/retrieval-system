@@ -1,6 +1,7 @@
-# API
+# 接口文档
 
-## get datasets
+## 获取数据库
+
 ```
 GET: /datasets
 
@@ -65,5 +66,19 @@ modality:['pt','vx','mv']
 reply:
 {
 results:[uuid1,uuid2,uuid3]
+}
+```
+
+## get details
+```
+GET: /details
+{
+query:path,
+}
+reply:
+{
+modalities:[pt,vx,mv]
+objectId: id
+label: label
 }
 ```
